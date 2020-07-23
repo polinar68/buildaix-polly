@@ -1,5 +1,8 @@
 #!/usr/bin/ksh -e
 # script to combine X32 and X64 to Xany
+prefix=$1
+[[ -z ${prefix} ]] && prefix="/opt"
+
 for DIR in X32 X64; do
   cd ${DIR}
   rm -rf usr opt
@@ -21,13 +24,13 @@ rm -rf Xany/usr/lpp
 find ./Xany -name \*.la | xargs rm -f 
 
 print Merge 32-bit libraries
-for libs in X64/opt/lib/*.a; do
-	cplib.ksh $libs
+for lib in X64${prefix}/lib/*.a; do
+	cplib.ksh ${lib} ${prefix}
 done
 
 # just to make sure all .a files have been processed
 #
 print
-print "all archives are:"
-print date: `/usr/bin/date`
-find Xany -mtime 1 -name \*.a -ls | /usr/bin/sort +11
+# print "all archives are:"
+# print date: `/usr/bin/date`
+find Xany -mtime -1 -name \*.a -ls | /usr/bin/sort +11
